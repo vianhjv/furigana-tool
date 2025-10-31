@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ thêm Furigana (Netlify)</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 2em; line-height: 1.6; }
+        .container { max-width: 700px; margin: 0 auto; }
+        textarea { width: 100%; height: 150px; margin-bottom: 1em; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+        #output { margin-top: 1em; border: 1px solid #ccc; padding: 1em; min-height: 150px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thêm Furigana vào văn bản tiếng Nhật</h1>
+        <p>Nhập văn bản tiếng Nhật vào ô bên dưới và nhấn nút.</p>
+        
+        <textarea id="inputText" placeholder="Ví dụ: 漢字が好きです"></textarea>
+        <button onclick="addFurigana()">Thêm Furigana</button>
+        
+        <h2>Kết quả:</h2>
+        <div id="output"><p>Kết quả sẽ hiển thị ở đây.</p></div>
+    </div>
+
+    <script>
+        async function addFurigana() {
+            const inputText = document.getElementById('inputText').value;
+            const outputDiv = document.getElementById('output');
+
+            if (!inputText.trim()) {
+                outputDiv.innerHTML = '<p>Vui lòng nhập văn bản.</p>';
+                return;
+            }
+
+            outputDiv.innerHTML = '<p>Đang xử lý...</p>';
+
+            try {
+                // Gửi yêu cầu đến Netlify Function có tên là 'add-furigana'
+                const response = await fetch('/.netlify/functions/add-furigana', {
+                    method: 'POST',
+                    body: JSON.stringify({ text: inputText }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server báo lỗi: ${errorText}`);
+                }
+
+                const resultHtml = await response.text();
+                outputDiv.innerHTML = resultHtml;
+
+            } catch (error) {
+                console.error('Lỗi:', error);
+                outputDiv.innerHTML = `<p style="color: red;">Đã có lỗi xảy ra. Vui lòng kiểm tra lại. (${error.message})</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
