@@ -1,4 +1,7 @@
-const Kuroshiro = require('kuroshiro');
+// File: netlify/functions/add-furigana.js (ĐÃ SỬA LỖI)
+
+const Kuroshiro = require('kuroshiro').default; // <--- SỬA LỖI Ở ĐÂY
+
 const KuromojiAnalyzer = require('kuroshiro-analyzer-kuromoji');
 
 // Khởi tạo Kuroshiro một lần để tái sử dụng, giúp tăng tốc độ
